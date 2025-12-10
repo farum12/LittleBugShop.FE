@@ -30,16 +30,11 @@ export interface AddPaymentMethodRequest {
   payPalEmail?: string;
 }
 
-interface PaymentMethodsResponse {
-  value: PaymentMethod[];
-  Count: number;
-}
-
 export const paymentMethodService = {
   // Get all payment methods
   getPaymentMethods: async (): Promise<PaymentMethod[]> => {
-    const response = await api.get<PaymentMethodsResponse>('/payment-methods');
-    return response.data.value || [];
+    const response = await api.get<PaymentMethod[]>('/payment-methods');
+    return response.data;
   },
 
   // Get single payment method

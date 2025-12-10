@@ -1,15 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { wishlistService, cartService, authService } from '../services';
+import { WishlistItem } from '../services/wishlistService';
 import { LoadingSpinner, ErrorMessage } from '../components';
-
-interface WishlistItem {
-  id: number;
-  productId: number;
-  productName: string;
-  author: string;
-  price: number;
-}
 
 export default function WishlistPage() {
   const navigate = useNavigate();
@@ -165,34 +158,34 @@ export default function WishlistPage() {
             {items.map((item) => (
               <div 
                 key={item.id}
-                className={`bg-white rounded-xl shadow p-4 ${removingId === item.productId ? 'opacity-50' : ''}`}
-                data-testid={`wishlist-item-${item.productId}`}
+                className={`bg-white rounded-xl shadow p-4 ${removingId === item.id ? 'opacity-50' : ''}`}
+                data-testid={`wishlist-item-${item.id}`}
               >
                 {/* Item Image */}
                 <div 
                   className="bg-gradient-to-br from-bug-primary to-bug-dark h-40 rounded-lg mb-4 flex items-center justify-center"
-                  data-testid={`wishlist-item-image-${item.productId}`}
+                  data-testid={`wishlist-item-image-${item.id}`}
                 >
                   <span className="text-5xl">📚</span>
                 </div>
 
                 {/* Item Details */}
                 <Link 
-                  to={`/products/${item.productId}`}
+                  to={`/products/${item.id}`}
                   className="font-semibold text-gray-900 hover:text-bug-primary block mb-1"
-                  data-testid={`wishlist-item-name-${item.productId}`}
+                  data-testid={`wishlist-item-name-${item.id}`}
                 >
-                  {item.productName}
+                  {item.name}
                 </Link>
                 <p 
                   className="text-sm text-gray-500 mb-2"
-                  data-testid={`wishlist-item-author-${item.productId}`}
+                  data-testid={`wishlist-item-author-${item.id}`}
                 >
                   by {item.author || 'Unknown'}
                 </p>
                 <p 
                   className="text-xl font-bold text-bug-primary mb-4"
-                  data-testid={`wishlist-item-price-${item.productId}`}
+                  data-testid={`wishlist-item-price-${item.id}`}
                 >
                   ${item.price.toFixed(2)}
                 </p>
@@ -200,17 +193,17 @@ export default function WishlistPage() {
                 {/* Item Actions */}
                 <div className="flex gap-2">
                   <button
-                    onClick={() => handleAddToCart(item.productId)}
+                    onClick={() => handleAddToCart(item.id)}
                     className="btn-primary flex-grow text-sm"
-                    data-testid={`wishlist-add-to-cart-${item.productId}`}
+                    data-testid={`wishlist-add-to-cart-${item.id}`}
                   >
                     Add to Cart
                   </button>
                   <button
-                    onClick={() => handleRemoveItem(item.productId)}
-                    disabled={removingId === item.productId}
+                    onClick={() => handleRemoveItem(item.id)}
+                    disabled={removingId === item.id}
                     className="btn-outline text-red-500 border-red-300 hover:bg-red-50 px-3"
-                    data-testid={`wishlist-remove-${item.productId}`}
+                    data-testid={`wishlist-remove-${item.id}`}
                   >
                     🗑️
                   </button>

@@ -76,6 +76,13 @@ export default function Header() {
                   My Orders
                 </Link>
                 <Link 
+                  to="/payment-methods" 
+                  className="hover:text-bug-accent transition-colors"
+                  data-testid="nav-payment-methods"
+                >
+                  💳 Payments
+                </Link>
+                <Link 
                   to="/profile" 
                   className="hover:text-bug-accent transition-colors"
                   data-testid="nav-profile"
@@ -167,6 +174,14 @@ export default function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     My Orders
+                  </Link>
+                  <Link 
+                    to="/payment-methods" 
+                    className="hover:text-bug-accent transition-colors"
+                    data-testid="mobile-nav-payment-methods"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    💳 Payments
                   </Link>
                   <Link 
                     to="/profile" 

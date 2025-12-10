@@ -10,6 +10,7 @@ import ProfilePage from './pages/ProfilePage'
 import CheckoutPage from './pages/CheckoutPage'
 import OrdersPage from './pages/OrdersPage'
 import WishlistPage from './pages/WishlistPage'
+import PaymentMethodsPage from './pages/PaymentMethodsPage'
 import NotFoundPage from './pages/NotFoundPage'
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="orders" element={<OrdersPage />} />
         <Route path="wishlist" element={<WishlistPage />} />
+        <Route path="payment-methods" element={<PaymentMethodsPage />} />
         <Route path="login" element={<LoginPage />} />
         <Route path="register" element={<RegisterPage />} />
         <Route path="profile" element={<ProfilePage />} />

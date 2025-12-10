@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { productService, cartService, wishlistService, reviewService } from '../services';
+import { productService, cartService, wishlistService, reviewService, authService } from '../services';
 import { LoadingSpinner, ErrorMessage } from '../components';
 import type { Product, Review } from '../types';
 
@@ -16,6 +16,15 @@ export default function ProductDetailPage() {
   const [addingToCart, setAddingToCart] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
   const [inWishlist, setInWishlist] = useState(false);
+  
+  // Review form state
+  const [showReviewForm, setShowReviewForm] = useState(false);
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewText, setReviewText] = useState('');
+  const [submittingReview, setSubmittingReview] = useState(false);
+  const [reviewError, setReviewError] = useState<string | null>(null);
+
+  const isLoggedIn = authService.isAuthenticated();
 
   useEffect(() => {
     if (id) {
@@ -81,6 +90,32 @@ export default function ProductDetailPage() {
       }
     } catch (err) {
       console.error('Error updating wishlist:', err);
+    }
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!product || !reviewText.trim()) return;
+
+    try {
+      setSubmittingReview(true);
+      setReviewError(null);
+      await reviewService.createReview(product.id, {
+        rating: reviewRating,
+        reviewText: reviewText.trim(),
+      });
+      // Reset form and reload reviews
+      setReviewText('');
+      setReviewRating(5);
+      setShowReviewForm(false);
+      // Reload product to get updated review count and reviews
+      await loadProduct(product.id);
+    } catch (err: unknown) {
+      console.error('Error submitting review:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Failed to submit review. You may have already reviewed this product.';
+      setReviewError(errorMessage);
+    } finally {
+      setSubmittingReview(false);
     }
   };
 
@@ -270,9 +305,129 @@ export default function ProductDetailPage() {
         className="mt-12"
         data-testid="reviews-section"
       >
-        <h2 className="text-2xl font-bold text-gray-900 mb-6">
-          Customer Reviews ({reviews.length})
-        </h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-bold text-gray-900">
+            Customer Reviews ({reviews.length})
+          </h2>
+          {isLoggedIn && !showReviewForm && (
+            <button
+              onClick={() => setShowReviewForm(true)}
+              className="btn-primary"
+              data-testid="write-review-button"
+            >
+              ✍️ Write a Review
+            </button>
+          )}
+        </div>
+
+        {/* Review Form */}
+        {showReviewForm && (
+          <div 
+            className="bg-white rounded-xl shadow-md p-6 mb-6"
+            data-testid="review-form"
+          >
+            <h3 className="text-lg font-semibold mb-4">Write Your Review</h3>
+            
+            {reviewError && (
+              <div 
+                className="bg-red-50 text-red-700 p-3 rounded-lg mb-4"
+                data-testid="review-error"
+              >
+                {reviewError}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmitReview}>
+              {/* Rating Selection */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Your Rating
+                </label>
+                <div 
+                  className="flex gap-1"
+                  data-testid="rating-selector"
+                >
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      key={star}
+                      type="button"
+                      onClick={() => setReviewRating(star)}
+                      className={`text-3xl transition-colors ${
+                        star <= reviewRating ? 'text-yellow-500' : 'text-gray-300'
+                      } hover:text-yellow-400`}
+                      data-testid={`rating-star-${star}`}
+                    >
+                      ★
+                    </button>
+                  ))}
+                  <span className="ml-2 text-gray-600 self-center">
+                    ({reviewRating}/5)
+                  </span>
+                </div>
+              </div>
+
+              {/* Review Text */}
+              <div className="mb-4">
+                <label 
+                  htmlFor="reviewText" 
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Your Review
+                </label>
+                <textarea
+                  id="reviewText"
+                  value={reviewText}
+                  onChange={(e) => setReviewText(e.target.value)}
+                  placeholder="Share your thoughts about this book..."
+                  rows={4}
+                  className="input-field w-full"
+                  required
+                  data-testid="review-text-input"
+                />
+              </div>
+
+              {/* Form Actions */}
+              <div className="flex gap-3">
+                <button
+                  type="submit"
+                  disabled={submittingReview || !reviewText.trim()}
+                  className="btn-primary"
+                  data-testid="submit-review-button"
+                >
+                  {submittingReview ? 'Submitting...' : 'Submit Review'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowReviewForm(false);
+                    setReviewError(null);
+                    setReviewText('');
+                    setReviewRating(5);
+                  }}
+                  className="btn-outline"
+                  data-testid="cancel-review-button"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Login prompt for non-logged users */}
+        {!isLoggedIn && (
+          <div 
+            className="bg-bug-light rounded-lg p-4 mb-6 text-center"
+            data-testid="login-to-review-prompt"
+          >
+            <p className="text-gray-700">
+              <Link to="/login" className="text-bug-primary font-semibold hover:underline">
+                Log in
+              </Link>
+              {' '}to write a review
+            </p>
+          </div>
+        )}
 
         {reviews.length === 0 ? (
           <p 

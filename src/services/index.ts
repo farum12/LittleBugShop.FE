@@ -5,3 +5,5 @@ export { authService, profileService } from './authService';
 export { orderService } from './orderService';
 export { reviewService } from './reviewService';
 export { wishlistService } from './wishlistService';
+export { paymentMethodService, PaymentMethodType } from './paymentMethodService';
+export type { PaymentMethod, AddPaymentMethodRequest } from './paymentMethodService';

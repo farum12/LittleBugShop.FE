@@ -34,12 +34,15 @@ export default function ProductDetailPage() {
       setProduct(productData);
       setReviews(reviewsData);
       
-      // Check wishlist status
-      try {
-        const isInWishlist = await wishlistService.isInWishlist(productId);
-        setInWishlist(isInWishlist);
-      } catch {
-        // Ignore wishlist check errors (user might not be logged in)
+      // Check wishlist status only if user is logged in
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          const isInWishlist = await wishlistService.isInWishlist(productId);
+          setInWishlist(isInWishlist);
+        } catch {
+          // Ignore wishlist check errors
+        }
       }
     } catch (err) {
       setError('Failed to load product details');

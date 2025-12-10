@@ -1,6 +1,14 @@
 import api from './api';
 import type { Review, CreateReviewRequest } from '../types';
 
+interface ProductReviewsResponse {
+  productId: number;
+  productName: string;
+  averageRating: number;
+  totalReviews: number;
+  reviews: Review[];
+}
+
 export const reviewService = {
   // Get reviews for a product
   getProductReviews: async (
@@ -12,8 +20,8 @@ export const reviewService = {
       sortOrder?: 'asc' | 'desc';
     }
   ): Promise<Review[]> => {
-    const response = await api.get(`/products/${productId}/Reviews`, { params });
-    return response.data;
+    const response = await api.get<ProductReviewsResponse>(`/products/${productId}/Reviews`, { params });
+    return response.data.reviews || [];
   },
 
   // Get single review

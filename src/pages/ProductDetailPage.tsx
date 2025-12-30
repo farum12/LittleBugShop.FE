@@ -442,18 +442,20 @@ export default function ProductDetailPage() {
               <div 
                 key={review.id}
                 className="bg-white rounded-lg shadow p-4"
-                data-testid={`review-${review.id}`}
+                data-testid={`review-card-${review.id}`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold">{review.userName}</span>
+                    <span className="font-semibold" data-testid={`review-userName`}>{review.userName}</span>
                     {review.isVerifiedPurchase && (
                       <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">
                         Verified Purchase
                       </span>
                     )}
                   </div>
-                  <div className="flex">
+                  <div 
+                    className="flex"
+                    data-testid={`review-rating-stars`}>
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span 
                         key={star}
@@ -464,8 +466,12 @@ export default function ProductDetailPage() {
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700">{review.reviewText}</p>
-                <p className="text-sm text-gray-400 mt-2">
+                <p className="text-gray-700" data-testid={`review-text`}>
+                  {review.reviewText}
+                </p>
+                <p 
+                className="text-sm text-gray-400 mt-2"
+                data-testid={`review-date`}>
                   {new Date(review.createdAt).toLocaleDateString()}
                 </p>
               </div>

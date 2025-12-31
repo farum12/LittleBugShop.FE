@@ -159,7 +159,7 @@ export default function WishlistPage() {
               <div 
                 key={item.id}
                 className={`bg-white rounded-xl shadow p-4 ${removingId === item.id ? 'opacity-50' : ''}`}
-                data-testid={`wishlist-item-${item.id}`}
+                data-testid={`wishlist-item-container-${item.id}`}
               >
                 {/* Item Image */}
                 <div 
